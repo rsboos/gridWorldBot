@@ -79,14 +79,12 @@ int main() {
 	bool isFinalState = false;
 	do {
 		// choose arbitrary action -> or choose best action (calculation Q(state,action) for all possible moves)
-		for all actions {
 		curBest = q(State,Action)
 		value = calculateQ(state,action);
 		q[state][action] = value;
 		curState = newState
 		if (isFinal(curState))
 			isFinalState = true;
-		}
 	} while (!isFinalState);
 
 
