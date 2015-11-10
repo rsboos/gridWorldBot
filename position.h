@@ -8,6 +8,8 @@
 
 
 class position {
+	private:
+		std::pair<int,int> coordinates;
 	public:
 		float currentValue;
 		std::pair<int,int> coordinates;
