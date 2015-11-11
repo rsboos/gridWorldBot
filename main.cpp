@@ -22,6 +22,7 @@ std::vector< std::vector<float> > r;
 std::vector< float > reward;
 vector<bool> isFinal;
 vector<bool> visited;
+vector<int> directions;
 
 
 int nColumns,nLines, totalValidCells;
@@ -244,7 +245,7 @@ int getNeighbour(int pos, int action) {
 			if (curPos == 10) {
 				//cout << "10 will execute: " << actionPrint(bestMove) << endl;
 			}
-
+			
 			
 		//int bestMove = find(values.begin(),values.end(),bestValue) - values.begin(); // UP, DOWN, LEFT, RIGHT
 		//cout << bestMove << endl;
