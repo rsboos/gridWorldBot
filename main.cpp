@@ -21,6 +21,7 @@ std::vector< std::vector<float> > q;
 std::vector< std::vector<float> > r;
 std::vector< float > reward;
 vector<bool> isFinal;
+vector<bool> visited;
 
 
 int nColumns,nLines, totalValidCells;
@@ -139,6 +140,19 @@ int getNeighbour(int pos, int action) {
 			return false;
 	}
 
+	bool performRandomAction() {
+		int probConst = 80;
+		int eta = count(visited.begin(),visited.end(),true) / totalValidCells;
+		eta = eta / 2; // amortize constant
+		int probRes = probConst - eta;
+		srand (time(NULL));
+		int randNum = rand() % 100;
+		if (randNum < probRes)
+			return true;
+		else
+			return false;
+	}
+
 	void performEpisode(int pos) {
 		bool isFinalState = false;
 		vector<float> valuesTmp;
@@ -147,30 +161,38 @@ int getNeighbour(int pos, int action) {
 		valuesTmp.resize(4);
 		int curPos = pos;
 		do {
-			for (int i=0; i < valuesTmp.size(); i++)
-				valuesTmp[i] = calculateQ(curPos,i);	
-			for (int i=0; i < values.size(); i++) {
-				values[i] = normalizeQ(i,valuesTmp);
-				//cout << values[i] << endl;
-			}
 			srand (time(NULL));
-			float bestValue = *max_element(values.begin(),values.end());
+			visited[curPos] == true;
 			int bestMove;
-			vector<int> bestPositions;
-			if (hasEquals(values,bestValue,curPos,bestPositions)) {
-				int randVal = rand() % bestPositions.size();
-				bestMove = bestPositions[randVal];
-			}
-			else {
-				size_t tmp = max_element(values.begin(),values.end()) - values.begin();
-				bestMove = static_cast<int>(tmp);
-			}
-			if (count (values.begin(), values.end(), bestValue) == 4) {
+			float bestValue;
+			if (performRandomAction()) {
 				bestMove = rand() % 4;
+				bestValue = calculateQ(curPos,bestMove);
+				vector<float> v;
+				v.push_back(bestValue);
+				bestValue = normalizeQ(0,v);
 			}
-			else {
+			else {			
+				for (int i=0; i < valuesTmp.size(); i++)
+					valuesTmp[i] = calculateQ(curPos,i);	
+				for (int i=0; i < values.size(); i++) {
+					values[i] = normalizeQ(i,valuesTmp);
+					//cout << values[i] << endl;
+				}
+				srand (time(NULL));
+				bestValue = *max_element(values.begin(),values.end());
 				
+				vector<int> bestPositions;
+				if (hasEquals(values,bestValue,curPos,bestPositions)) {
+					int randVal = rand() % bestPositions.size();
+					bestMove = bestPositions[randVal];
+				}
+				else {
+					size_t tmp = max_element(values.begin(),values.end()) - values.begin();
+					bestMove = static_cast<int>(tmp);
+				}
 			}
+
 			q[pos][bestMove] = bestValue;
 		//int bestMove = find(values.begin(),values.end(),bestValue) - values.begin(); // UP, DOWN, LEFT, RIGHT
 		//cout << bestMove << endl;
@@ -208,12 +230,14 @@ void initVars() {
 }
 
 int main() {
+	totalValidCells = 0;
 	// Start reading input
 	std::cin >> nLines >> nColumns >> defaultValue;
 	q.resize(nLines*nColumns);
 	r.resize(nLines*nColumns);
 	for (int i=0; i < nLines*nColumns; i++) {
 		isFinal.push_back(false);
+		visited.push_back(false);
 	}
 	reward.resize(nLines*nColumns);
 	string trash;
@@ -228,6 +252,7 @@ int main() {
 			//cout << q[i].size();
 		}
 		else if (content == "D") {
+			totalValidCells++;
 			reward[i] = defaultValue;
 			vector< float > qElement, rElement;
 			//cout << q[i].size();
@@ -239,6 +264,7 @@ int main() {
 			}
 		}
 		else {
+			totalValidCells++;
 			double tmp = atof(content.c_str());
 			reward[i] = (float) tmp;
 			std::vector< float > qElement, rElement;
