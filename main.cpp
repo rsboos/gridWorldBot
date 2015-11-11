@@ -111,7 +111,8 @@ int getNeighbour(int pos, int action) {
 		return ret;
 	}
 
-	float normalizeQ(int index, vector<float> &v) {
+	float normalizeQ (int index, vector<float> &v) {
+		//return v[index];
 		if (index == UP) {
 			return (0.8 *v[index]) + (0.1 * v[LEFT]) + (0.1 * v[RIGHT]);
 		}
@@ -211,8 +212,9 @@ int getNeighbour(int pos, int action) {
 				vector<float> v; // float
 				v.push_back(bestValue);
 				bestValue = normalizeQ(0,v);
-				if (q[curPos][bestMove] < bestValue)
+				//if (q[curPos][bestMove] < bestValue)
 					q[curPos][bestMove] = bestValue;
+
 			}
 			else {
 				srand (time(NULL));			
@@ -245,7 +247,7 @@ int getNeighbour(int pos, int action) {
 			if (curPos == 10) {
 				//cout << "10 will execute: " << actionPrint(bestMove) << endl;
 			}
-			
+
 			
 		//int bestMove = find(values.begin(),values.end(),bestValue) - values.begin(); // UP, DOWN, LEFT, RIGHT
 		//cout << bestMove << endl;
