@@ -23,7 +23,7 @@ std::vector< float > reward;
 vector<bool> isFinal;
 
 
-int nColumns,nLines;
+int nColumns,nLines, totalValidCells;
 float defaultValue;
 
 bool isWall(int pos) {
@@ -124,17 +124,22 @@ int getNeighbour(int pos, int action) {
 		return -INF;
 	}
 
-	bool hasEquals(vector<float> &v,float bestValue, vector<int> &ret) {
+	bool hasEquals(vector<float> &v,float bestValue, int pos, vector<int> &ret) {
+		int totEqual = 0;
 		for (int i=0; i < v.size(); i++)
-			if (v[i] == bestValue)
-				ret.push_back(i);
-		if (ret.size() > 1)
+			if (v[i] == bestValue) {
+				totEqual++;
+				if (!(getNeighbour(pos,i) == pos)) 
+					ret.push_back(i);
+			}
+
+		if (totEqual > 1)
 			return true;
 		else
 			return false;
 	}
 
-	void performEpisode(int pos) {	
+	void performEpisode(int pos) {
 		bool isFinalState = false;
 		vector<float> valuesTmp;
 		vector<float> values;
@@ -151,8 +156,8 @@ int getNeighbour(int pos, int action) {
 			srand (time(NULL));
 			float bestValue = *max_element(values.begin(),values.end());
 			int bestMove;
-			vector<int> bestPositions; 
-			if (hasEquals(values,bestValue,bestPositions)) {
+			vector<int> bestPositions;
+			if (hasEquals(values,bestValue,curPos,bestPositions)) {
 				int randVal = rand() % bestPositions.size();
 				bestMove = bestPositions[randVal];
 			}
