@@ -340,13 +340,16 @@ void printQ() {
 					if (q[pos][index] != 0)
 						onlyZeros = false;
 				if (isFinal[pos]) {
-					fMap << "F\t";
+					if (reward[pos] > 0)
+						fMap << "\u25CE ";
+					else
+						fMap << "\u25C9 ";
 				}
 				else if (onlyZeros) {
-					fMap << "NTVIS\t"; // NOT VISITED
+					fMap << "N "; // NOT VISITED
 				}
 				else {
-				fMap << actionPrint(choosenAction[pos]) << "\t";
+				fMap << actionPrint(choosenAction[pos]) << " ";
 				/*float bestVal = -INF;
 				for (int index = 0; index < 4; index++) {
 					if ((q[pos][index] != 0) && (q[pos][index] > bestVal)) {
@@ -358,7 +361,7 @@ void printQ() {
 				}
 			}
 			else
-				fMap << "X\t";
+				fMap << "\u25A0 ";
 						
 		}
 		fMap << endl;
@@ -371,8 +374,16 @@ void printQ() {
 int main() {
 	srand((unsigned) time(NULL));
 	totalValidCells = 0;
+	string nLinesStr, nColumnsStr, defaultValueStr;
 	// Start reading input
-	std::cin >> nLines >> nColumns >> defaultValue;
+	std::cin >> nLinesStr >> nColumnsStr >> defaultValueStr;
+	nLinesStr.erase (0,2);
+	nColumnsStr.erase (0,2);
+	defaultValueStr.erase (0,2);
+	nLines = atoi(nLinesStr.c_str());
+	nColumns = atoi(nColumnsStr.c_str());
+	defaultValue = atof(defaultValueStr.c_str());
+	cout << defaultValue;
 	q.resize(nLines*nColumns);
 	r.resize(nLines*nColumns);
 	choosenAction.resize(nLines*nColumns);
